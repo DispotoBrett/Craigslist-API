@@ -15,12 +15,13 @@ public class CraigslistParser
 	/**
 	 * Instantiates a new CraigslistParser.
 	 * @param theLocation the location to be searched in *MUST BE IN CL FORMAT*.
-	 * @param searchMe the term to be searched for *LIMITED TO ONE WORD*.
+	 * @param searchMe the term to be searched for.
 	 */
 	public CraigslistParser(String theLocation, String searchMe)
 	{
 		location = theLocation;
 		search = searchMe;
+		search = search.replaceAll(" ", "%20");
 		theURL = generateURL();
 	}
 	
@@ -31,6 +32,7 @@ public class CraigslistParser
 	 {
 		try 
 		{
+			//To be modified: soon to return Array of Listings.
 			String retval = "";
 			String line = "";
     		boolean  foundCloser = false;
