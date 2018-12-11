@@ -26,5 +26,4 @@ Upcoming changes (12/09/2018):
 			To be modified: soon to return Array of Listings.
 			
 	New Classes:
-		ListingComparator
-		More to be determined.
+		To be added.
