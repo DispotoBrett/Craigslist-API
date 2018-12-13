@@ -40,8 +40,8 @@ public class Listing implements Comparable
 	 */
 	public Listing(String title, double price)
 	{
-		title = this.title;
-		price = this.price;
+		this.title = title;
+		this.price = price;
 		priceAvailable = true;
 	}
 	
