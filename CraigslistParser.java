@@ -11,6 +11,7 @@ public class CraigslistParser
 	private String search;
 	private String location;
 	private String theURL;
+	public static int GET_ALL_LISTINGS = -1;
 	
 	/**
 	 * Instantiates a new CraigslistParser.
@@ -28,25 +29,63 @@ public class CraigslistParser
 	/**
 	 * Gets the pertinent information- price and title, in string format.
 	 */
-	 public String getInfo()
+	 public Listing[] getInfo(int numberOfResults)
 	 {
 		try 
 		{
-			//To be modified: soon to return Array of Listings.
-			String retval = "";
-			String line = "";
-    		boolean  foundCloser = false;
-    		boolean foundOpener = false; 
-    		int lim = 0;
-    		
-		    URL url = new URL(theURL);
-		    InputStream in = url.openStream();
+			//Declarations
+			String title = "", line = "";
+			double price = 0;
+    		boolean  foundCloser = false, foundOpener = false; 
+    		int lim = 0, objectsFound = 0;
+    		URL url = new URL(theURL);
+    		Listing[] results = new Listing[numberOfResults]; //Trim down later if we can't find all of them
+		    
+    		InputStream in = url.openStream();
 		    Scanner scan = new Scanner(in);
 		    
-		    while(scan.hasNextLine() && retval == "")
+		    while(scan.hasNextLine() && objectsFound < numberOfResults)
 		    {
+		    	if( (price != 0) && !title.equals("")) //Not all listings have price change URL to force that
+		    	{
+		    		results[objectsFound] = new Listing(title, price);
+		    		title = "";
+		    		price = 0;
+		    		objectsFound++;
+		    	}
+		    	
 		    	line = scan.nextLine();
-		    	if(line.contains("\" class=\"result-title hdrlnk\">"))
+		    	
+		    	//Get Price
+		    	if(line.contains("<span class=\"result-price\">"))
+		    	{
+
+		    		for(int i = 0; i < line.length() && !foundOpener; i++)
+		    		{
+		    			if(line.charAt(i) ==  '>')
+		    			{
+		    				foundOpener = true;
+		    				line = line.substring(i + 2);
+		    			}
+		    		}
+		    		
+
+		    		for(int i = 0; i < line.length() && !foundCloser; i++)
+		    		{
+		    			if(line.charAt(i) ==  '<')
+		    			{
+		    				foundCloser = true;
+		    				line = line.substring(0 , i);
+		    			}
+		    		}
+		    		price = Double.parseDouble(line);
+		    		foundOpener = false;
+		    		foundCloser = false;
+
+		    	}	 
+		    	
+		    	//Get Title
+		    	else if(line.contains("\" class=\"result-title hdrlnk\">"))
 		    	{
 		    		for(int i = 0; i < line.length() && !foundCloser; i++)
 		    		{
@@ -56,28 +95,27 @@ public class CraigslistParser
 		    				foundCloser = true;
 		    			}
 		    		}
+		    		line = line.substring(lim + 1);
 		    		
-		    		retval = line.substring(lim + 1);
-		    		
-		    		for(int i = 0; i < retval.length() && !foundOpener; i++)
+		    		for(int i = 0; i < line.length() && !foundOpener; i++)
 		    		{
-		    			if(retval.charAt(i) == '<')
+		    			if(line.charAt(i) == '<')
 		    			{
 		    				lim = i;
 		    				foundOpener = true;
 		    			}
 		    		}
-		    		
-		    		retval = retval.substring(0, lim);
-		    		
+		    		title = line.substring(0, lim);
+		    		foundOpener = false;
+		    		foundCloser = false;
 		    	}
 		    }
 		    scan.close();
-		    return retval;		
+		    return results;
 		}
 		catch(Exception e)
 		{
-			 return "Improper Input";
+			 return null;
 		}
 	 }
 	 
