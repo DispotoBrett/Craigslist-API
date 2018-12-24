@@ -1,125 +1,171 @@
-import java.util.Objects;
-
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Scanner;
 /**
- * The basis of the craigslist API, an Item represents 1 (one) CL search result.
- * @author BrettDispoto
+ * Finds information from Craigslist classified ads.
+ * @author Brett Dispoto
+ *
  */
-public class Listing implements Comparable
+public class CraigslistParser
 {
+	private String search;
+	private String location;
+	private String theURL[];
+	public static final int MAX_PAGES = 24;
+	public static final int GET_ALL_LISTINGS = -1;
 	
-	private boolean priceAvailable;
-	private String title;
-	private double price;
-	//Coming Soon: Image
 	
-	//---------------Constructors------------
 	/**
-	 * Sets default values ~ empty Listing
+	 * Instantiates a new CraigslistParser.
+	 * @param theLocation the location to be searched in *MUST BE IN CL FORMAT*.
+	 * @param searchMe the term to be searched for.
 	 */
-	public Listing()
+	public CraigslistParser(String theLocation, String searchMe)
 	{
-		price = 0;
-		title = "";
-		priceAvailable = false;	
+		location = theLocation;
+		search = searchMe;
+		search = search.replaceAll(" ", "%20");
+		theURL = generateURL();
 	}
 	
 	/**
-	 * Create new listing (without price).
-	 * @param title the title of the listing.
+	 * Gets the pertinent information- price and title, in string format.
 	 */
-	public Listing(String title)
-	{
-		this.title = title;
-		price = 0;
-		priceAvailable = false;
-	}
-	
-	/**
-	 * Create new listing (with price).
-	 * @param title the title of the listing.
-	 */
-	public Listing(String title, double price)
-	{
-		this.title = title;
-		this.price = price;
-		priceAvailable = true;
-	}
-	
-	//---------------Overrides------------
-	
-	/**
-	 * Compares by price if available, otherwise uses title.
-	 * @return the comparison
-	 * @Override
-	 */
-	public int compareTo(Object other)
-	{
-		if(other != null)
+	 public Listing[] getInfo(int numberOfResults)
+	 {
+		try 
 		{
-			if(other.getClass().getName().equals(getClass().getName()))
-			{
-				Listing otherListing = (Listing) other;
-				return ((priceAvailable == true) && (otherListing.priceAvailable == true)) ?
-						Double.compare(this.price, otherListing.price) :
-						title.compareTo(otherListing.title);
-			}
-		}
-		return -1; //Not of the same type.
-	}
-	
-	@Override
-	public String toString()
-	{
-		String retval = getClass().getName() + "[title=" + title + ",priceAvailable" + priceAvailable + "]";
-		if(priceAvailable)
-			retval = retval.replace("]" , ",price=" + Double.toString(price) + "]");
-		
-		return retval;			
-	}
+			String title = "", line = "";
+			double price = 0;
+    		boolean  foundCloser = false, foundOpener = false; 
+    		int lim = 0, objectsFound = 0;
+    		Listing[] results = new Listing[numberOfResults]; //Trim down later if we can't find all of them
+		    Scanner scan =  null;		
+    		for(String u: theURL)
+    		{
+        		URL url = new URL(u);
+        		InputStream in = url.openStream();
 
+        		scan = new Scanner(in);
+		    
+			    while(scan.hasNextLine() && objectsFound < numberOfResults)
+			    {
+			    	if( (price != 0) && !title.equals("")) //Not all listings have price change URL to force that
+			    	{
+			    		results[objectsFound] = new Listing(title, price);
+			    		title = "";
+			    		price = 0;
+			    		objectsFound++;
+			    	}
+			    	
+			    	line = scan.nextLine();
+			    	
+			    	//Get Price
+			    	if(line.contains("<span class=\"result-price\">"))
+			    	{
 	
-	@Override
-	public boolean equals(Object other)
-	{
-		if(other != null)
-		{
-			if(other.getClass().getName().equals(getClass().getName()))
-			{
-				if(hashCode() == other.hashCode())
-					return true;
-			}
+			    		for(int i = 0; i < line.length() && !foundOpener; i++)
+			    		{
+			    			if(line.charAt(i) ==  '>')
+			    			{
+			    				foundOpener = true;
+			    				line = line.substring(i + 2);
+			    			}
+			    		}
+			    		
+	
+			    		for(int i = 0; i < line.length() && !foundCloser; i++)
+			    		{
+			    			if(line.charAt(i) ==  '<')
+			    			{
+			    				foundCloser = true;
+			    				line = line.substring(0 , i);
+			    			}
+			    		}
+			    		price = Double.parseDouble(line);
+			    		foundOpener = false;
+			    		foundCloser = false;
+	
+			    	}	 
+		    	
+			    	//Get Title
+			    	else if(line.contains("\" class=\"result-title hdrlnk\">"))
+			    	{
+			    		for(int i = 0; i < line.length() && !foundCloser; i++)
+			    		{
+			    			if(line.charAt(i) == '>')
+			    			{
+			    				lim = i;
+			    				foundCloser = true;
+			    			}
+			    		}
+			    		line = line.substring(lim + 1);
+			    		
+			    		for(int i = 0; i < line.length() && !foundOpener; i++)
+			    		{
+			    			if(line.charAt(i) == '<')
+			    			{
+			    				lim = i;
+			    				foundOpener = true;
+			    			}
+			    		}
+			    		title = line.substring(0, lim);
+			    		foundOpener = false;
+			    		foundCloser = false;
+			    	}
+			    	
+		    	}
+		    }
+		    //scan.close();
+		    
+		    //Trim null values from array
+		    int trueLength = 0;
+		    Listing[] trimmedResults;
+		    
+		    for(int i = 0; i < results.length; i++)
+		    {
+		    	if(results[i] == null)
+		    	{
+		    		trueLength = i;
+		    		break;
+		    	}
+		    }
+		    
+		    trimmedResults = new Listing[trueLength + 1];
+		    
+		    for(int i = 0; i < trueLength; i++)
+		    {
+		    	trimmedResults[i] = results[i];
+		    }
+		    
+		    return results;
 		}
-		return false;
-	}
-	
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(title, priceAvailable, price);
-	}
-	
-	
-	//---------------General Methods----------------------
+		catch(Exception e)
+		{
+			System.out.println("URl is the error");
+			System.exit(-2);
+			 //return null;
+			return null;
+		}
+
+	 }
+	 
 	/**
-	 * Gets the item's price (if author has listed it).
-	 * @return price of the listing
-	 * rows NoSuchFieldException
+	 * Internal class use only.
+	 * @return URL needed for parser.
 	 */
-	public double getPrice() throws NoSuchFieldException
+	private String[] generateURL()
 	{
-		if(priceAvailable = false)
-			throw new NoSuchFieldException();
+		String[] retVal = new String[MAX_PAGES];
 		
-		return price;
-	}
-	
-	/**
-	 * Gets the title of the listing.
-	 * @return the title of the listing
-	 */
-	public String getTitle()
-	{
-		return title;
+		for(int i = 0; i < MAX_PAGES; i++)
+		{
+			retVal[i] = "https://" + location + ".craigslist.org/search/sss?s=" + (0 * i) +  "&query=" + search + "&sort=rel";
+		}
+		return retVal;
 	}
 	
 }
