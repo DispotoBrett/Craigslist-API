@@ -9,15 +9,13 @@ See the licence for any questions about use.
 
 <hr>
 
-Upcoming changes (12/09/2018):
+Upcoming changes:
 
 		Coming Soon:
-			getMostExpensive()
-			getNewestListing()
-			getCheapest()
-			getOldest()
-			getPictures() 
+			Sorting methods
 			More Javadoc to be added
 			Add Support for UNICOCDE in title
 			Add Support for listings without price
 			Add Support for listings not in "for sale" section
+Known Bugs:
+	If a listing does not have an associated price, it automatically uses the previous listings' price. 
