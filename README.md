@@ -11,7 +11,7 @@ See the licence for any questions about use.
 <h5>Application Example</h5>
 A sample application can be found in the TwitterExample.java 
 it is an application to test the Craigslist API, also tweets the results to @dispotobrett twitter. 
-Twitter link <a href="twitter.com/dispotobrett">here <href>
+Twitter link <a href="twitter.com/dispotobrett">here </a>
 
 <hr>
 Upcoming changes:
