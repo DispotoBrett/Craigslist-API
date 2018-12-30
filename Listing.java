@@ -1,171 +1,120 @@
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Scanner;
+import java.util.Objects;
+
 /**
- * Finds information from Craigslist classified ads.
- * @author Brett Dispoto
- *
+ * The basis of the Craigslist API, an Item represents 1 (one) CL search result.
+ * @author BrettDispoto
  */
-public class CraigslistParser
+public class Listing implements Comparable<Listing>
 {
-	private String search;
-	private String location;
-	private String theURL[];
-	public static final int MAX_PAGES = 24;
-	public static final int GET_ALL_LISTINGS = -1;
 	
+	private boolean priceAvailable;
+	private String title;
+	private double price;
 	
+	//---------------Constructors------------
 	/**
-	 * Instantiates a new CraigslistParser.
-	 * @param theLocation the location to be searched in *MUST BE IN CL FORMAT*.
-	 * @param searchMe the term to be searched for.
+	 * Sets default values ~ empty Listing
 	 */
-	public CraigslistParser(String theLocation, String searchMe)
+	public Listing()
 	{
-		location = theLocation;
-		search = searchMe;
-		search = search.replaceAll(" ", "%20");
-		theURL = generateURL();
+		price = 0;
+		title = "";
+		priceAvailable = false;
 	}
 	
 	/**
-	 * Gets the pertinent information- price and title, in string format.
+	 * Create new listing (without price).
+	 * @param title the title of the listing.
 	 */
-	 public Listing[] getInfo(int numberOfResults)
-	 {
-		try 
-		{
-			String title = "", line = "";
-			double price = 0;
-    		boolean  foundCloser = false, foundOpener = false; 
-    		int lim = 0, objectsFound = 0;
-    		Listing[] results = new Listing[numberOfResults]; //Trim down later if we can't find all of them
-		    Scanner scan =  null;		
-    		for(String u: theURL)
-    		{
-        		URL url = new URL(u);
-        		InputStream in = url.openStream();
-
-        		scan = new Scanner(in);
-		    
-			    while(scan.hasNextLine() && objectsFound < numberOfResults)
-			    {
-			    	if( (price != 0) && !title.equals("")) //Not all listings have price change URL to force that
-			    	{
-			    		results[objectsFound] = new Listing(title, price);
-			    		title = "";
-			    		price = 0;
-			    		objectsFound++;
-			    	}
-			    	
-			    	line = scan.nextLine();
-			    	
-			    	//Get Price
-			    	if(line.contains("<span class=\"result-price\">"))
-			    	{
-	
-			    		for(int i = 0; i < line.length() && !foundOpener; i++)
-			    		{
-			    			if(line.charAt(i) ==  '>')
-			    			{
-			    				foundOpener = true;
-			    				line = line.substring(i + 2);
-			    			}
-			    		}
-			    		
-	
-			    		for(int i = 0; i < line.length() && !foundCloser; i++)
-			    		{
-			    			if(line.charAt(i) ==  '<')
-			    			{
-			    				foundCloser = true;
-			    				line = line.substring(0 , i);
-			    			}
-			    		}
-			    		price = Double.parseDouble(line);
-			    		foundOpener = false;
-			    		foundCloser = false;
-	
-			    	}	 
-		    	
-			    	//Get Title
-			    	else if(line.contains("\" class=\"result-title hdrlnk\">"))
-			    	{
-			    		for(int i = 0; i < line.length() && !foundCloser; i++)
-			    		{
-			    			if(line.charAt(i) == '>')
-			    			{
-			    				lim = i;
-			    				foundCloser = true;
-			    			}
-			    		}
-			    		line = line.substring(lim + 1);
-			    		
-			    		for(int i = 0; i < line.length() && !foundOpener; i++)
-			    		{
-			    			if(line.charAt(i) == '<')
-			    			{
-			    				lim = i;
-			    				foundOpener = true;
-			    			}
-			    		}
-			    		title = line.substring(0, lim);
-			    		foundOpener = false;
-			    		foundCloser = false;
-			    	}
-			    	
-		    	}
-		    }
-		    //scan.close();
-		    
-		    //Trim null values from array
-		    int trueLength = 0;
-		    Listing[] trimmedResults;
-		    
-		    for(int i = 0; i < results.length; i++)
-		    {
-		    	if(results[i] == null)
-		    	{
-		    		trueLength = i;
-		    		break;
-		    	}
-		    }
-		    
-		    trimmedResults = new Listing[trueLength + 1];
-		    
-		    for(int i = 0; i < trueLength; i++)
-		    {
-		    	trimmedResults[i] = results[i];
-		    }
-		    
-		    return results;
-		}
-		catch(Exception e)
-		{
-			System.out.println("URl is the error");
-			System.exit(-2);
-			 //return null;
-			return null;
-		}
-
-	 }
-	 
-	/**
-	 * Internal class use only.
-	 * @return URL needed for parser.
-	 */
-	private String[] generateURL()
+	public Listing(String title)
 	{
-		String[] retVal = new String[MAX_PAGES];
-		
-		for(int i = 0; i < MAX_PAGES; i++)
+		this.title = title;
+		price = 0;
+		priceAvailable = false;
+	}
+	
+	/**
+	 * Create new listing (with price).
+	 * @param title the title of the listing.
+	 */
+	public Listing(String title, double price)
+	{
+		this.title = title;
+		this.price = price;
+		priceAvailable = true;
+	}
+	
+	//---------------Overrides------------
+	
+	/**
+	 * Compares by price if available, otherwise uses title.
+	 * @return the comparison
+	 * @Override
+	 */
+	public int compareTo(Listing other)
+	{
+		if(other != null)
 		{
-			retVal[i] = "https://" + location + ".craigslist.org/search/sss?s=" + (0 * i) +  "&query=" + search + "&sort=rel";
+			return ((priceAvailable == true) && (other.priceAvailable == true)) ?
+					Double.compare(this.price, other.price) :
+					title.compareTo(other.title);
 		}
-		return retVal;
+		return -1; //Not of the same type.
+	}
+	
+	@Override
+	public String toString()
+	{
+		String retval = getClass().getName() + "[title=" + title + ",priceAvailable" + priceAvailable + "]";
+		if(priceAvailable)
+			retval = retval.replace("]" , ",price=" + Double.toString(price) + "]");
+		
+		return retval;			
+	}
+
+	
+	@Override
+	public boolean equals(Object other)
+	{
+		if(other != null)
+		{
+			if(other.getClass().getName().equals(getClass().getName()))
+			{
+				if(hashCode() == other.hashCode())
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(title, priceAvailable, price);
+	}
+	
+	
+	//---------------General Methods----------------------
+	/**
+	 * Gets the item's price (if author has listed it).
+	 * @return price of the listing
+	 * rows NoSuchFieldException
+	 */
+	public double getPrice() throws NoSuchFieldException
+	{
+		if(priceAvailable = false)
+			throw new NoSuchFieldException();
+		
+		return price;
+	}
+	
+	/**
+	 * Gets the title of the listing.
+	 * @return the title of the listing
+	 */
+	public String getTitle()
+	{
+		return title;
 	}
 	
 }
