@@ -17,5 +17,5 @@ Upcoming changes:
 			Add Support for UNICOCDE in title
 			Add Support for listings without price
 			Add Support for listings not in "for sale" section
-Known Bugs:
-	If a listing does not have an associated price, it automatically uses the previous listings' price. 
+Known Bug:
+	If a listing does not have an associated price, it automatically uses the previous listing's price. 
