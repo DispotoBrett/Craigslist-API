@@ -1,0 +1,1 @@
+memberSearchIndex = [{"p":"<Unnamed>","c":"CraigslistParser","l":"CraigslistParser(String, String)","url":"%3Cinit%3E(java.lang.String,java.lang.String)"},{"p":"<Unnamed>","c":"CraigslistParser","l":"getInfo(int)"},{"p":"<Unnamed>","c":"CraigslistParser","l":"MAX_LISTINGS"},{"p":"<Unnamed>","c":"CraigslistParser","l":"MAX_PAGES"}]
