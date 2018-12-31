@@ -1,7 +1,7 @@
 import java.io.IOException;
 
 /**
- * Creates and manages an array of Craigslist listings (For sale).
+ * Creates and manages an array of Craigslist listings (For sale), this is the only recommended class for public use.
  * @author Brett Dispoto 
  */
 public class Query 
@@ -26,26 +26,7 @@ public class Query
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Creates a new query.
-	 * @param location the desiered cl location code, (ex: Los Angeles -> LA).
-	 * @param search the product to search for.
-	 * @param numberOfResults the desiered number of results.
-	 */
-	public Query(String location, String search, int numberOfResults)
-	{
-		p = new CraigslistParser(location, search);
-		try 
-		{
-			theListings = p.getInfo(numberOfResults);
-		}
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}	
-	}
-	
+		
 	/**
 	 * Gets the listings found for the queried term.
 	 * @return the listings found in array from.
