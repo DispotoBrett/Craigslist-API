@@ -12,6 +12,7 @@ See the licence for any questions about use.
 A sample application can be found in the TwitterExample.java 
 it is an application to test the Craigslist API, also tweets the results to @dispotobrett twitter. 
 Twitter link <a href="twitter.com/dispotobrett">here </a>
+![alt text](TwitterExample.png)
 
 <hr>
 Upcoming changes:
