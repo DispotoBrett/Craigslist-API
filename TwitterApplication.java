@@ -23,10 +23,10 @@ public class TwitterApplication
 		//-----------------------------------Config-------------------------------------
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
-		  .setOAuthConsumerKey("KC728loPPZhr80pZPOlbcF89X") // Censored
-		  .setOAuthConsumerSecret("B7VSZGCaNY7kjZS4m7RktU5a7iwM08TyCZnhydvh1CcXkHounK") // Censored
-		  .setOAuthAccessToken("1079482993545142272-rLITjdAvD2rKPpU1XbmXle4bLhKhIq") // Censored
-		  .setOAuthAccessTokenSecret("TaXwfvSqZiHT5BLKqrLzgUVaXHkZQa4OYFUt3ZtlY3U6u"); // Censored
+		  .setOAuthConsumerKey("**************");	 // Censored
+		  .setOAuthConsumerSecret("**************");	 // Censored
+		  .setOAuthAccessToken("**************"); 	 // Censored
+		  .setOAuthAccessTokenSecret("**************");  // Censored
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
 		//------------------------------------------------------------------------------
