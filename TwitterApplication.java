@@ -1,8 +1,7 @@
-import twitter4j.Status;
-import twitter4j.Twitter;
-import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
+import java.util.*;
+import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
+//include Craigslist API files in src
 
 /**
  * Application to test Brett Dispoto's Craigslist API (Using Twitter)
@@ -13,28 +12,41 @@ public class TwitterApplication
 {	
 	public static void main(String[] args) throws NoSuchFieldException, TwitterException
 	{	
-		//-----------------------------Config-------------------------------------
+		//-----------------------------------Declarations-------------------------------
+		Set<String> hasBeenTweeted = new HashSet<String>();
+		String tweetMe;
+		Query q = new Query("NYC", "Basketball");
+		Listing[] l = q.getListings();
+		//------------------------------------------------------------------------------
+		
+		
+		//-----------------------------------Config-------------------------------------
 		ConfigurationBuilder cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true)
-		  .setOAuthConsumerKey("*************") // Censored
-		  .setOAuthConsumerSecret("*************") // Censored
-		  .setOAuthAccessToken("*************") // Censored
-		  .setOAuthAccessTokenSecret("*************"); // Censored
+		  .setOAuthConsumerKey("KC728loPPZhr80pZPOlbcF89X") // Censored
+		  .setOAuthConsumerSecret("B7VSZGCaNY7kjZS4m7RktU5a7iwM08TyCZnhydvh1CcXkHounK") // Censored
+		  .setOAuthAccessToken("1079482993545142272-rLITjdAvD2rKPpU1XbmXle4bLhKhIq") // Censored
+		  .setOAuthAccessTokenSecret("TaXwfvSqZiHT5BLKqrLzgUVaXHkZQa4OYFUt3ZtlY3U6u"); // Censored
 		TwitterFactory tf = new TwitterFactory(cb.build());
 		Twitter twitter = tf.getInstance();
+		//------------------------------------------------------------------------------
+
 		
-		//------------------------Get Info/Tweet-----------------------
-		Query q = new Query("Bham", "computer");
-		Listing[] l = q.getListings();
-		String tweetMe = "", addMe;
-		Status status =  twitter.updateStatus("Tweeting Computers In Birmingham");
-		System.out.println(l.length);
-		for(int i = 0; i < 5; i++)
+		
+		//-------------------------------------Tweet------------------------------------
+		
+		twitter.updateStatus("Tweeting Basketballs in New York City");
+		for(int i = 0; i < l.length; i++)
 		{
-			addMe = l[i].getTitle() + "........$" + l[i].getPrice() + '\n';
-			
-			if(addMe.length() < 280 && !status.getText().equals(addMe))
-				status = twitter.updateStatus(addMe);
+			tweetMe = l[i].getTitle() + "........$" + l[i].getPrice() + '\n';
+			System.out.println(tweetMe);
+			if(tweetMe.length() < 280 && !hasBeenTweeted.contains(tweetMe))
+			{
+				twitter.updateStatus(tweetMe);
+				hasBeenTweeted.add(tweetMe);
+			}
 		}
+		//------------------------------------------------------------------------------
+
 	}
 }            
