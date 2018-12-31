@@ -36,6 +36,7 @@ public class Listing implements Comparable<Listing>
 	/**
 	 * Create new listing (with price).
 	 * @param title the title of the listing.
+	 * @param price the price of the listing.
 	 */
 	public Listing(String title, double price)
 	{
@@ -49,7 +50,6 @@ public class Listing implements Comparable<Listing>
 	/**
 	 * Compares by price if available, otherwise uses title.
 	 * @return the comparison
-	 * @Override
 	 */
 	public int compareTo(Listing other)
 	{
@@ -98,7 +98,7 @@ public class Listing implements Comparable<Listing>
 	/**
 	 * Gets the item's price (if author has listed it).
 	 * @return price of the listing
-	 * rows NoSuchFieldException
+	 * @throws NoSuchFieldException
 	 */
 	public double getPrice() throws NoSuchFieldException
 	{
