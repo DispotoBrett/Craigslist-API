@@ -1,7 +1,7 @@
 import java.util.Objects;
 
 /**
- * The basis of the Craigslist API, an Item represents 1 (one) CL search result.
+ * Models a single craigslist listing.
  * @author BrettDispoto
  */
 public class Listing implements Comparable<Listing>
