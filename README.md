@@ -12,7 +12,7 @@ See the licence for any questions about use.
 A sample application can be found in the TwitterExample.java. <br>
 Makes use of my <b>"Twitter bot"</b> which uses Twitter's "Twitter4J API"
 it is an application to test the Craigslist API, also tweets the results to @dispotobrett twitter. 
-Twitter link <a href="twitter.com/dispotobrett">here </a>
+Twitter link <a href="https://twitter.com/DispotoBrett">here </a>
 <img src="TwitterExample.PNG">
 
 <hr>
