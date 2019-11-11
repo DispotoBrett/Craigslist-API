@@ -1,0 +1,28 @@
+# Craigslist-API
+Craigslist does not have a public API,
+This is an in progress attempt at making one.
+See the licence for any questions about use.
+<hr>
+<h5>Photo Example</h5>
+
+![alt text](https://i.imgur.com/LGYMp8T.png)
+
+<hr>
+<h5>Application Example</h5>
+A sample application can be found in the TwitterExample.java. <br>
+Makes use of my <b>"Twitter bot"</b> which uses Twitter's "Twitter4J API"
+it is an application to test the Craigslist API, also tweets the results to @dispotobrett twitter. 
+Twitter link <a href="https://twitter.com/DispotoBrett">here </a>
+<img src="TwitterExample.PNG">
+
+<hr>
+Upcoming changes:
+
+		Coming Soon:
+			Sorting methods
+			More Javadoc to be added
+			Add Support for UNICOCDE in title
+			Add Support for listings without price
+			Add Support for listings not in "for sale" section
+Known Bug:
+	If a listing does not have an associated price, it automatically uses the previous listing's price. 

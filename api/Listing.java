@@ -1,19 +1,27 @@
+package api;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Objects;
 
 /**
  * Models a single craigslist listing.
  * @author BrettDispoto
  */
+
+@XmlRootElement
 public class Listing implements Comparable<Listing>
 {
-	
+	@XmlElement
 	private boolean priceAvailable;
+	@XmlElement
 	private String title;
+	@XmlElement
 	private double price;
 	
 	//---------------Constructors------------
 	/**
-	 * Sets default values ~ empty Listing
+	 * Sets default values ~ empty api.Listing
 	 */
 	public Listing()
 	{

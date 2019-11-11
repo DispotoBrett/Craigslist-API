@@ -1,3 +1,5 @@
+package api;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -18,7 +20,7 @@ public class CraigslistParser
 	
 	
 	/**
-	 * Instantiates a new CraigslistParser.
+	 * Instantiates a new api.CraigslistParser.
 	 * @param theLocation the location to be searched in *MUST BE IN CL FORMAT*.
 	 * @param searchMe the term to be searched for.
 	 */
